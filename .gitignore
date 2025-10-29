@@ -1,0 +1,12 @@
+# Python Environment Files
+/stockwise_ai/venv/
+/stockwise_ai/logs/
+/stockwise_ai/__pycache__/
+
+# Node Environment Files
+/stockwise-frontend/node_modules/
+/stockwise-frontend/dist/
+
+# Secrets & Configuration
+*.env*
+*.DS_Store
