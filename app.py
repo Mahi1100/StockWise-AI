@@ -9,6 +9,11 @@ import pandas as pd
 from google import genai 
 from google.genai.errors import APIError 
 from dateutil import parser # NOTE: Pylance warning for this is fine if installed, but we use built-in methods
+# app.py (Near the top with other imports)
+from flask import Flask, request, jsonify, make_response
+# ... other imports
+from flask_cors import CORS
+import json
 
 # Load environment variables from .env file
 load_dotenv()
@@ -17,6 +22,8 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
+# CRITICAL FIX: Initialize CORS to allow frontend connections
+CORS(app)
 # Connect to MongoDB
 try:
     connect(host=os.getenv('MONGO_URI'))
@@ -425,6 +432,7 @@ def get_demand_suggestion(sku_id):
         sku, raw_sales = get_sales_data_for_analysis(sku_id)
         
         sales_trend_data = calculate_sales_trends(raw_sales, period='W') 
+        historical_sales_json = json.dumps(sales_trend_data['sales_over_time'])
         average_sales = sales_trend_data['average_sales_per_period']
 
         # F4.2: Construct the Sophisticated Prompt
