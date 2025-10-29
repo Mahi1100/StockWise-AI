@@ -1,8 +1,9 @@
 // stockwise-frontend/src/hooks/useSalesData.js
 import { useState, useEffect, useCallback } from 'react';
 
-// Hardcoded SKU ID (replace with your actual working ID if different)
-// This should be the ID of the 'Organic T-Shirt, Blue' you created
+// Define the absolute API URL for the deployed Render service.
+const API_BASE_URL = 'https://stockwise-ai-86f8.onrender.com/api'; 
+// Hardcoded SKU ID (Replace with your actual working ID if necessary)
 const HARDCODED_SKUID = "54a1c574-4605-4b20-b2ae-65746d4517ff"; 
 
 export const useSalesData = () => {
@@ -14,8 +15,8 @@ export const useSalesData = () => {
         setIsLoading(true);
         setError(null);
         try {
-            // F3.1: Fetch aggregated weekly sales data
-            const response = await fetch(`/api/skus/${HARDCODED_SKUID}/sales/summary?period=W`); 
+            // FIX: Use the absolute API_BASE_URL
+            const response = await fetch(`${API_BASE_URL}/skus/${HARDCODED_SKUID}/sales/summary?period=W`); 
             
             if (!response.ok) {
                 throw new Error(`Failed to fetch sales data. Status: ${response.status}`);
@@ -23,7 +24,6 @@ export const useSalesData = () => {
             
             const result = await response.json();
             
-            // Extract the sales_over_time array from the nested 'data' property
             if (result.data && result.data.sales_over_time) {
                 setSalesData(result.data.sales_over_time);
             } else {

@@ -1,7 +1,10 @@
 // stockwise-frontend/src/hooks/useSKUManager.js
 import { useState, useEffect, useCallback } from 'react';
 
-const API_BASE = '/api/skus';
+// Define the absolute API URL for the deployed Render service.
+// This ensures all hooks connect to the live backend.
+const API_BASE_URL = 'https://stockwise-ai-86f8.onrender.com/api'; 
+// If testing locally (both servers running), use: const API_BASE_URL = '/api';
 
 export const useSKUManager = () => {
     const [skus, setSkus] = useState([]);
@@ -13,7 +16,11 @@ export const useSKUManager = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const url = searchQuery ? `${API_BASE}?search=${searchQuery}` : API_BASE;
+            // FIX: Use the absolute API_BASE_URL for all fetches
+            const url = searchQuery ? 
+                `${API_BASE_URL}/skus?search=${searchQuery}` : 
+                `${API_BASE_URL}/skus`;
+                
             const response = await fetch(url);
             
             if (!response.ok) {
@@ -39,7 +46,7 @@ export const useSKUManager = () => {
     // CREATE: Add a new SKU (F1.1)
     const addSku = async (newSkuData) => {
         try {
-            const response = await fetch(API_BASE, {
+            const response = await fetch(`${API_BASE_URL}/skus`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newSkuData)
@@ -50,7 +57,6 @@ export const useSKUManager = () => {
                 throw new Error(errorData.error || `Failed to add SKU. Status: ${response.status}`);
             }
 
-            // Refresh the list after successful creation
             await fetchSkus();
             return true;
         } catch (err) {
@@ -63,7 +69,7 @@ export const useSKUManager = () => {
     // UPDATE: Edit SKU details (F1.3)
     const updateSkuDetails = async (skuId, updatedDetails) => {
         try {
-            const response = await fetch(`${API_BASE}/${skuId}`, {
+            const response = await fetch(`${API_BASE_URL}/skus/${skuId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedDetails)
@@ -86,7 +92,7 @@ export const useSKUManager = () => {
     // PATCH: Update stock level (F1.4)
     const updateSkuStock = async (skuId, newStockLevel) => {
         try {
-            const response = await fetch(`${API_BASE}/${skuId}/stock`, {
+            const response = await fetch(`${API_BASE_URL}/skus/${skuId}/stock`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ new_stock_level: parseInt(newStockLevel) })

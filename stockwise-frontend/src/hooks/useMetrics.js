@@ -1,6 +1,12 @@
+// stockwise-frontend/src/hooks/useMetrics.js
 import { useState, useEffect, useCallback } from 'react';
 
-// Define the initial structure of your metrics data (matching F8.1 endpoint output)
+// DEFINE THE DEPLOYED RENDER URL HERE (Replace with your actual URL)
+// IMPORTANT: Use the full public URL of your deployed Flask backend API service.
+const API_BASE_URL = 'https://stockwise-ai-86f8.onrender.com/api'; 
+// If you test locally (running both servers), set this to: const API_BASE_URL = '/api';
+
+// Define the initial structure of your metrics data
 const initialMetrics = {
     total_active_skus: 0,
     total_stock_count: 0,
@@ -20,10 +26,11 @@ export const useMetrics = () => {
         setIsLoading(true);
         setError(null);
         try {
-            // The proxy in vite.config.js directs this call to http://127.0.0.1:5000/api/dashboard/metrics
-            const response = await fetch('/api/dashboard/metrics'); 
+            // FIX: Ensure the API_BASE_URL is concatenated correctly
+            const response = await fetch(`${API_BASE_URL}/dashboard/metrics`); 
             
             if (!response.ok) {
+                // Check for non-200 status codes
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             

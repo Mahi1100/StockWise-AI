@@ -1,7 +1,7 @@
 // stockwise-frontend/src/hooks/useReportManager.js
 import { useState, useEffect, useCallback } from 'react';
 
-const API_BASE = '/api';
+const API_BASE_URL = 'https://stockwise-ai-86f8.onrender.com/api';
 
 export const useReportManager = () => {
     const [report, setReport] = useState({});
@@ -14,7 +14,8 @@ export const useReportManager = () => {
         setError(null);
         try {
             // F8.2: Fetch the summary report 
-            const response = await fetch(`${API_BASE}/reports/summary`); 
+            // FIX: Use the absolute API_BASE_URL
+            const response = await fetch(`${API_BASE_URL}/reports/summary`); 
             
             if (!response.ok) {
                 throw new Error(`Failed to fetch report. Status: ${response.status}`);
@@ -22,7 +23,7 @@ export const useReportManager = () => {
             
             const data = await response.json();
             setReport(data);
-            setMetrics(data.metrics); // F8.1 metrics are nested in the report object
+            setMetrics(data.metrics);
             
         } catch (err) {
             console.error("Failed to fetch report:", err);
@@ -39,13 +40,13 @@ export const useReportManager = () => {
     // F8.3: Logic to download the CSV report
     const downloadReport = async (format) => {
         try {
-            const response = await fetch(`${API_BASE}/reports/summary?format=${format}`);
+            // FIX: Use the absolute API_BASE_URL for download
+            const response = await fetch(`${API_BASE_URL}/reports/summary?format=${format}`);
             
             if (!response.ok) {
                  throw new Error(`Failed to download report. Status: ${response.status}`);
             }
             
-            // Get the file contents as a blob
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             
