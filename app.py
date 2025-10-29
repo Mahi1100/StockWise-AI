@@ -34,7 +34,29 @@ except Exception as e:
     print(f"Error initializing Gemini Client: {e}")
     gemini_client = None
 
+@app.route('/')
+def index():
+    """Handle root path health check by redirecting or returning a simple message."""
+    return jsonify({"message": "StockWise AI API is active. Access services via /api/..."}), 200
 
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    """Defines the explicit health check path for Render."""
+    # The logic below is what we created earlier to check MongoDB and API status
+    try:
+        sku_count = SKU.objects.count() 
+        return jsonify({
+            "status": "OK",
+            "database_status": "Connected",
+            "sku_count": sku_count
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            "status": "Service Degraded",
+            "database_status": "Error",
+            "message": str(e)
+        }), 500
 # ==============================================================================
 # HELPER FUNCTIONS FOR DATE PARSING AND METRICS
 # ==============================================================================
